@@ -75,7 +75,7 @@ img.addEventListener('touchcancel', dragEnd);
 
 const designPageUrl = new URL(`design.html?id=${id}`, window.location.href).href;
 const message = `Hello Guddi Silai 👋\n\nMujhe ye blouse design pasand hai.\n\nDesign: ${d.title}\nDesign ID: ${id}\nCategory: ${d.category}\nLink: ${designPageUrl}\n\nPlease price, stitching details aur availability bataiye. Thank you.`;
-const whatsappLink = `https://wa.me/9309093123?text=${encodeURIComponent(message)}`;
+const whatsappLink = `https://wa.me/919309093123?text=${encodeURIComponent(message)}`;
 
 document.querySelector('#whatsappAction').onclick = (event) => {
   event.preventDefault();

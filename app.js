@@ -130,7 +130,7 @@ document.querySelectorAll('.whats-button').forEach((button) => {
     const text = encodeURIComponent(
       `Hello Guddi Silai 👋\n\nMujhe blouse design ke baare mein enquiry karni hai.\n\nDesign: ${design ? design.title : 'Blouse Design'}\nDesign ID: ${design ? design.id : 'N/A'}\nCategory: ${design ? design.category : 'General'}\n\nPlease price, stitching details aur availability bataiye.\n\n${designPage}`
     );
-    window.open(`https://wa.me/9309093123?text=${text}`, '_blank');
+    window.open(`https://wa.me/919309093123?text=${text}`, '_blank');
   };
 });
 
