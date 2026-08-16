@@ -8,50 +8,81 @@ document.querySelector('#designCategory').textContent = d.category.toUpperCase()
 document.querySelector('#designId').textContent = id;
 document.querySelector('#designDescription').textContent = d.desc;
 document.querySelector('#designTags').innerHTML = d.tags.map(t => `<span>#${t}</span>`).join('');
-const img = document.querySelector('#designImage'); img.src = d.src; img.alt = d.title;
-let zoom = 1; function setZoom() { img.style.transform = `scale(${zoom})`; }
-document.querySelector('#zoomIn').onclick = () => { zoom = Math.min(zoom + .25, 2.5); setZoom(); };
-document.querySelector('#zoomOut').onclick = () => { zoom = Math.max(zoom - .25, 1); setZoom(); };
-const imageUrl = new URL(d.src, window.location.href).href;
+const img = document.querySelector('#designImage');
+const zoomArea = document.querySelector('#zoomArea');
+img.src = d.src; img.alt = d.title;
+
+let zoom = 1;
+let panX = 0;
+let panY = 0;
+let dragging = false;
+let startX = 0;
+let startY = 0;
+let originX = 0;
+let originY = 0;
+
+function applyImageTransform() {
+  img.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+}
+
+function setZoom(nextZoom) {
+  zoom = Math.min(Math.max(nextZoom, 1), 3.5);
+  applyImageTransform();
+}
+
+document.querySelector('#zoomIn').onclick = () => {
+  setZoom(zoom + 0.25);
+};
+
+document.querySelector('#zoomOut').onclick = () => {
+  setZoom(zoom - 0.25);
+};
+
+const dragStart = (event) => {
+  if (zoom <= 1) return;
+  dragging = true;
+  img.classList.add('dragging');
+  startX = event.clientX ?? event.touches?.[0]?.clientX ?? 0;
+  startY = event.clientY ?? event.touches?.[0]?.clientY ?? 0;
+  originX = panX;
+  originY = panY;
+};
+
+const dragMove = (event) => {
+  if (!dragging) return;
+  const currentX = event.clientX ?? event.touches?.[0]?.clientX ?? startX;
+  const currentY = event.clientY ?? event.touches?.[0]?.clientY ?? startY;
+  panX = originX + (currentX - startX);
+  panY = originY + (currentY - startY);
+  applyImageTransform();
+};
+
+const dragEnd = () => {
+  if (!dragging) return;
+  dragging = false;
+  img.classList.remove('dragging');
+};
+
+img.addEventListener('pointerdown', dragStart);
+window.addEventListener('pointermove', dragMove);
+window.addEventListener('pointerup', dragEnd);
+window.addEventListener('pointercancel', dragEnd);
+
+img.addEventListener('touchstart', dragStart, { passive: true });
+img.addEventListener('touchmove', dragMove, { passive: true });
+img.addEventListener('touchend', dragEnd);
+img.addEventListener('touchcancel', dragEnd);
+
 const designPageUrl = new URL(`design.html?id=${id}`, window.location.href).href;
-const message = `Hello Guddi Silai 👋\n\nMujhe is blouse design ke baare mein enquiry karni hai.\n\n🧵 Design: ${d.title}\n🆔 Design ID: ${id}\n📂 Category: ${d.category}\n🏷️ Tags: ${d.tags.join(', ')}\n� Design page: ${designPageUrl}\n\nPlease price, stitching details aur availability bataiye. Thank you.`;
+const message = `Hello Guddi Silai 👋\n\nMujhe ye blouse design pasand hai.\n\nDesign: ${d.title}\nDesign ID: ${id}\nCategory: ${d.category}\nLink: ${designPageUrl}\n\nPlease price, stitching details aur availability bataiye. Thank you.`;
 const whatsappLink = `https://wa.me/9309093123?text=${encodeURIComponent(message)}`;
 
-document.querySelector('#whatsappAction').onclick = async (event) => {
+document.querySelector('#whatsappAction').onclick = (event) => {
   event.preventDefault();
-
-  const shareData = {
-    title: d.title,
-    text: message,
-    url: designPageUrl,
-  };
-
-  const canUseShareSheet = typeof navigator !== 'undefined' && navigator.share && navigator.canShare;
-
-  if (canUseShareSheet) {
-    try {
-      const response = await fetch(imageUrl, { cache: 'no-store' });
-      const blob = await response.blob();
-      const file = new File([blob], `${d.id}.jpg`, { type: blob.type || 'image/jpeg' });
-
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          ...shareData,
-          files: [file],
-        });
-        return;
-      }
-    } catch (_) {
-      // Ignore and proceed to WhatsApp fallback.
-    }
-  }
-
   window.open(whatsappLink, '_blank', 'noopener');
 };
 
-if (document.querySelector('#whatsappAction')) {
-  document.querySelector('#whatsappAction').setAttribute('href', whatsappLink);
-}
+document.querySelector('#whatsappAction').setAttribute('href', whatsappLink);
 const save = document.querySelector('#saveDesign'), stored = new Set(JSON.parse(localStorage.getItem('guddi-silai-saved') || '[]'));
 function drawSave() { save.innerHTML = stored.has(id) ? '♥ <span>Saved</span>' : '♡ <span>Save</span>'; save.classList.toggle('saved', stored.has(id)); }
 drawSave(); save.onclick = e => { e.preventDefault(); stored.has(id) ? stored.delete(id) : stored.add(id); localStorage.setItem('guddi-silai-saved', JSON.stringify([...stored])); drawSave(); show(stored.has(id) ? 'Saved to your favourites ♡' : 'Removed from saved designs'); };

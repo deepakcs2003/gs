@@ -21,6 +21,7 @@ const grid = document.querySelector('#designGrid'), categoryList = document.quer
 const filterOverlay = document.querySelector('#filterOverlay');
 const filterButton = document.querySelector('#filterButton');
 const filterOptions = document.querySelector('#filterOptions');
+const loadSentinel = document.querySelector('#loadSentinel');
 
 function buildDesignText(d) {
   return [d.title, d.category, d.id, ...(d.tags || []), d.desc].join(' ').toLowerCase();
@@ -62,6 +63,14 @@ function filtered() {
   return designs.filter((design) => activeFilter.matches(design));
 }
 
+function openDesignsSection() {
+  activeCat = 'all';
+  shown = 24;
+  drawCategories();
+  render();
+  location.hash = 'designs';
+}
+
 function refreshSavedFilter() {
   const savedFilter = buildFilterConfig().find((filter) => filter.id === 'saved');
   if (savedFilter) {
@@ -78,6 +87,9 @@ function render() {
   const heading = document.querySelector('#designs .section-head .eyebrow');
   if (heading) heading.textContent = getActiveFilter().label.toUpperCase();
 
+  const safeShown = Math.min(shown, list.length || shown);
+  if (safeShown !== shown) shown = safeShown;
+
   grid.innerHTML = list.slice(0, shown).map(card).join('');
   grid.querySelectorAll('.heart').forEach((button) => {
     button.onclick = (event) => {
@@ -86,15 +98,31 @@ function render() {
       toggleSave(button.dataset.save);
     };
   });
+}
 
-  const loadMoreButton = document.querySelector('#loadMore');
-  if (loadMoreButton) loadMoreButton.style.display = shown >= list.length ? 'none' : 'block';
+function maybeLoadMoreOnScroll() {
+  if (!loadSentinel) return;
+  const list = filtered();
+  if (shown >= list.length) return;
+
+  const sentinelRect = loadSentinel.getBoundingClientRect();
+  if (sentinelRect.top <= window.innerHeight + 220) {
+    shown += 24;
+    render();
+  }
 }
 
 function toggleSave(id) { saved.has(id) ? saved.delete(id) : saved.add(id); localStorage.setItem('guddi-silai-saved', JSON.stringify([...saved])); refreshSavedFilter(); flash(saved.has(id) ? 'Saved to your favourites ♡' : 'Removed from saved designs'); render(); }
 function flash(text) { toast.textContent = text; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2400); }
 
-document.querySelector('#loadMore').onclick = () => { shown += 24; render(); };
+window.addEventListener('scroll', () => {
+  if (window.requestAnimationFrame) {
+    window.requestAnimationFrame(maybeLoadMoreOnScroll);
+  } else {
+    maybeLoadMoreOnScroll();
+  }
+}, { passive: true });
+
 document.querySelectorAll('.whats-button').forEach((button) => {
   button.onclick = () => {
     const design = button.closest('.design-card') ? designs.find((item) => item.id === button.dataset.id) : null;
@@ -124,9 +152,18 @@ document.querySelector('#searchInput').oninput = (event) => {
 
 document.querySelector('#favoritesNav').onclick = () => {
   activeCat = 'saved';
+  shown = 24;
+  drawCategories();
   render();
   location.hash = 'designs';
 };
+
+document.querySelectorAll('a[href="#designs"]').forEach((link) => {
+  link.onclick = (event) => {
+    event.preventDefault();
+    openDesignsSection();
+  };
+});
 
 if (filterButton && filterOverlay) {
   filterButton.onclick = () => filterOverlay.classList.add('open');
