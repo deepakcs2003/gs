@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#741c32" />
+    <meta name="description" content="Guddi Silai — elegant blouse designs, made for you." />
+    <title>Guddi Silai | Premium Blouse Designs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="announcement">✨ New bridal collection now available</div>
+    <header class="site-header">
+      <button class="icon-button menu-toggle" aria-label="Open menu">☰</button>
+      <a class="brand" href="#home" aria-label="Guddi Silai home"><span>GUDDI</span> SILAI</a>
+      <button class="icon-button search-trigger" aria-label="Search designs">⌕</button>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#designs">Designs</a><a href="#categories">Categories</a><a href="about.html">About</a><a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main id="home">
+      <section class="category-section" id="categories">
+        <div class="section-head category-section-head">
+          <h2>Browse by category</h2>
+          <button type="button" class="view-all-link" id="viewAllCategories">View all →</button>
+        </div>
+        <div class="category-scroll" id="categoryList"></div>
+      </section>
+
+      <section class="design-section" id="designs">
+        <div class="section-head"><div><p class="eyebrow">ALL DESIGNS</p><h2>Beautiful blouse designs</h2></div><button class="filter-button" id="filterButton">☷ <span>Filters</span></button></div>
+        <div class="design-grid" id="designGrid"></div>
+        <button class="load-more" id="loadMore">Explore more designs <span>↓</span></button><div id="loadSentinel" aria-hidden="true"></div>
+      </section>
+
+      <section class="contact-cta" id="contact"><p class="eyebrow">LET'S CREATE SOMETHING LOVELY</p><h2>Have a blouse in mind?</h2><p>Share your inspiration with us. We’ll help you bring it to life.</p><button class="button cream whats-button" data-title="a custom blouse">💚 WhatsApp पर पूछें</button></section>
+    </main>
+
+    <footer><a class="brand" href="#home"><span>GUDDI</span> SILAI</a><p>Elegant Blouse Designs, Made for You.</p><div><a href="about.html">Our story</a><a href="#contact">Contact</a><a href="#designs">All designs</a></div><small>© 2026 Guddi Silai. Made with care.</small></footer>
+
+    <nav class="bottom-nav" aria-label="Mobile navigation"><a class="active" href="#home">⌂<span>Home</span></a><a href="#designs">▦<span>Designs</span></a><button class="search-trigger">⌕<span>Search</span></button><a href="#categories">◇<span>Categories</span></a><button id="favoritesNav">♡<span>Saved</span></button></nav>
+
+    <div class="search-overlay" id="searchOverlay" aria-hidden="true"><div class="search-panel"><button class="close" aria-label="Close search">×</button><p class="eyebrow">FIND YOUR FAVORITE</p><h2>Search designs</h2><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Blouse design खोजें..." autofocus /></label><p class="search-hint">Try: bridal, puff, pearl, back, simple</p><div id="searchResults" class="search-results"></div></div></div>
+    <div class="filter-overlay" id="filterOverlay" aria-hidden="true"><div class="filter-panel"><button class="close-filter" aria-label="Close filters">×</button><p class="eyebrow">FILTER DESIGNS</p><h2>Show designs</h2><div class="filter-options" id="filterOptions"></div></div></div>
+    <div class="modal" id="designModal" aria-hidden="true"><div class="modal-card"><button class="close modal-close" aria-label="Close">×</button><div class="modal-image"><img id="modalImg" src="" alt="" /></div><div class="modal-content"><p class="eyebrow" id="modalCategory"></p><h2 id="modalTitle"></h2><p id="modalDescription"></p><div class="modal-tags" id="modalTags"></div><div class="modal-actions"><button class="button primary whats-button" id="modalWhats" data-title="">💚 WhatsApp enquiry</button><a class="button ghost" href="tel:+919309093123">📞 Call now</a></div></div></div></div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="catalog-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
